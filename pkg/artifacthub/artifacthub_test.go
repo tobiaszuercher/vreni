@@ -2,12 +2,13 @@ package artifacthub
 
 import (
 	"fmt"
-	"os"
 	"testing"
+
+	"github.com/tobiaszuercher/vervet/config"
 )
 
 func TestArtifacthub(t *testing.T) {
-	a := New(os.Getenv("API_KEY_ID"), os.Getenv("API_KEY_SECRET"))
+	a := New(config.FromEnvironment())
 
 	versions, err := a.PackageVersions("packages/helm/grafana/loki")
 

@@ -3,11 +3,13 @@ package scanner
 import (
 	"errors"
 
+	"github.com/Masterminds/semver/v3"
+
 	"github.com/tobiaszuercher/vervet/pkg/artifacthub"
 	"github.com/tobiaszuercher/vervet/pkg/model"
 )
 
-func (s *Scanner) Check(artifacts []*model.Artifact) ([]*model.Artifact, error) {
+func (s *Scanner) Check(artifacts []*model.Artifact) error {
 	var result error
 
 	hub := artifacthub.New(s.Config)
@@ -20,9 +22,16 @@ func (s *Scanner) Check(artifacts []*model.Artifact) ([]*model.Artifact, error) 
 		}
 
 		if len(versions) > 0 {
-			a.AvailableVersion = versions[0]
+			v, err := semver.NewVersion(versions[0])
+
+			if err != nil {
+				result = errors.Join(result, err)
+				continue
+			}
+
+			a.AvailableVersion = v
 		}
 	}
 
-	return artifacts, result
+	return result
 }

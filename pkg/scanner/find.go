@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
+
 	"github.com/tobiaszuercher/vervet/pkg/model"
 )
 
@@ -36,10 +38,16 @@ func (s *Scanner) Find(dir string) ([]*model.Artifact, error) {
 					return nil
 				}
 
+				v, err := semver.NewVersion(match[2])
+
+				if err != nil {
+					return err
+				}
+
 				result = append(result, &model.Artifact{
-					File:    filepath.Base(path),
+					File:    path,
 					URL:     match[1],
-					Version: match[2],
+					Version: v,
 				})
 			}
 		}

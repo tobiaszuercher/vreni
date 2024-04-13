@@ -1,13 +1,16 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/tobiaszuercher/vervet/config"
 	"github.com/tobiaszuercher/vervet/pkg/cli"
 	"github.com/tobiaszuercher/vervet/pkg/scanner"
 )
 
 func main() {
-	dir := "D:\\git\\zuehlke\\platformplane\\platformplane"
+	dir := os.Args[1]
 
 	cfg := config.FromEnvironment()
 
@@ -15,20 +18,21 @@ func main() {
 
 	artifacts, err := s.Find(dir)
 
-	cli.ArtifactTable(artifacts)
-
-	check, err := s.Check(artifacts)
-
-	cli.ArtifactTable(artifacts)
-
 	if err != nil {
-		return
+		log.Fatal(err.Error())
 	}
 
-	_ = check
-
-	if err != nil {
-		return
+	if err := s.Check(artifacts); err != nil {
+		log.Fatal(err.Error())
 	}
 
+	cli.List(artifacts)
+
+	if !cli.Prompt() {
+		os.Exit(0)
+	}
+
+	if err := scanner.Update(artifacts); err != nil {
+		log.Fatal(err.Error())
+	}
 }

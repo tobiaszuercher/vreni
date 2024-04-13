@@ -3,112 +3,81 @@ package cli
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
-	"github.com/charmbracelet/bubbles/table"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 
 	"github.com/tobiaszuercher/vervet/pkg/model"
 )
 
-func ArtifactTable(artifacts []*model.Artifact) {
-	columns := []table.Column{
-		{Title: "File", Width: 20},
-		{Title: "Artifact", Width: 100},
-		{Title: "Version", Width: 40},
-		{Title: "Latest", Width: 40},
-	}
+const (
+	purple = lipgloss.Color("99")
+	white  = lipgloss.Color("255")
+)
 
-	rows := generateRowsFromArtifacts(artifacts)
+func List(artifacts []*model.Artifact) {
+	re := lipgloss.NewRenderer(os.Stdout)
+	rows := createRows(artifacts, re)
 
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithRows(rows),
-		table.WithFocused(true),
+	var (
+		HeaderStyle = re.NewStyle().Foreground(purple).Bold(true).Padding(0, 2)
+		CellStyle   = re.NewStyle().Padding(0, 2)
+		OddRowStyle = CellStyle.Copy().Foreground(white)
 	)
 
-	s := table.DefaultStyles()
-
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(false)
-
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-
-	t.SetStyles(s)
-
-	m := TableModel{t, artifacts}
-
-	if _, err := tea.NewProgram(m).Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
-	}
-}
-
-type TableModel struct {
-	table table.Model
-
-	data []*model.Artifact
-}
-
-func (m TableModel) Init() tea.Cmd { return nil }
-
-func (m TableModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "esc":
-			if m.table.Focused() {
-				m.table.Blur()
-			} else {
-				m.table.Focus()
+	t := table.New().
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			if row == 0 {
+				return HeaderStyle
 			}
 
-		case "q", "ctrl+c":
-			return m, tea.Quit
+			switch col {
+			case 7:
+				return lipgloss.NewStyle().Background(lipgloss.Color("99"))
+			}
 
-		case "enter":
-			return m, tea.Batch(
-				tea.Printf("Let's go to %s!", m.table.SelectedRow()[1]),
-			)
-		}
-	case []*model.Artifact:
-		m.data = msg
+			return OddRowStyle
+		}).
+		Headers("FILE", "ARTIFACT", "INSTALLED", "AVAILABLE").
+		Rows(rows...)
 
-		m.table.SetRows(generateRowsFromArtifacts(msg))
-	}
-
-	m.table, cmd = m.table.Update(msg)
-
-	return m, cmd
+	fmt.Println(t)
 }
 
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
-
-func (m TableModel) View() string {
-	return baseStyle.Render(m.table.View()) + "\n"
-}
-
-func generateRowsFromArtifacts(artifacts []*model.Artifact) []table.Row {
-	rows := make([]table.Row, 0)
+func createRows(artifacts []*model.Artifact, re *lipgloss.Renderer) [][]string {
+	var rows [][]string
 
 	for _, a := range artifacts {
-		rows = append(rows, table.Row{
-			a.File,
-			a.URL,
-			a.Version,
-			a.AvailableVersion,
-		})
+		rows = append(rows, []string{filepath.Base(a.File), a.URL, a.Version.String(), a.RenderDiff()})
 	}
 
 	return rows
+}
+
+func Prompt() bool {
+	var ok bool
+
+	fmt.Println()
+	fmt.Println()
+
+	confirm := huh.NewConfirm().
+		Title("Do you want to update all deps?").
+		Description("Please confirm. ").
+		Affirmative("Yes!").
+		Negative("No.").
+		Value(&ok)
+
+	huh.NewForm(huh.NewGroup(confirm)).Run()
+
+	if ok {
+		fmt.Println("Updating deps...")
+	} else {
+		fmt.Println("No deps updated.")
+	}
+
+	return ok
 }
