@@ -57,13 +57,12 @@ func Prompt() bool {
 	var ok bool
 
 	fmt.Println()
-	fmt.Println()
 
 	confirm := huh.NewConfirm().
 		Title("Do you want to update all deps?").
 		Description("Please confirm. ").
-		Affirmative("Yes!").
-		Negative("No.").
+		Affirmative("Yes").
+		Negative("No").
 		Value(&ok)
 
 	huh.NewForm(huh.NewGroup(confirm)).Run()
