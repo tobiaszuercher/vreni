@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tobiaszuercher/vervet/pkg/model"
+	"github.com/tobiaszuercher/vreni/pkg/model"
 )
 
 func Update(artifacts []*model.Artifact) error {

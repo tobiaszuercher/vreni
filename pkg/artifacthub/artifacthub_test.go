@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tobiaszuercher/vervet/config"
+	"github.com/tobiaszuercher/vreni/config"
 )
 
 func TestArtifacthub(t *testing.T) {

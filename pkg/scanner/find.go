@@ -8,7 +8,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
-	"github.com/tobiaszuercher/vervet/pkg/model"
+	"github.com/tobiaszuercher/vreni/pkg/model"
 )
 
 func (s *Scanner) Find(dir string) ([]*model.Artifact, error) {
@@ -25,7 +25,7 @@ func (s *Scanner) Find(dir string) ([]*model.Artifact, error) {
 			content, err := os.ReadFile(path)
 
 			if err != nil {
-				return err
+				return nil
 			}
 
 			fileContent := string(content)

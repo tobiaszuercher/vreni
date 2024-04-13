@@ -5,8 +5,8 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 
-	"github.com/tobiaszuercher/vervet/pkg/artifacthub"
-	"github.com/tobiaszuercher/vervet/pkg/model"
+	"github.com/tobiaszuercher/vreni/pkg/artifacthub"
+	"github.com/tobiaszuercher/vreni/pkg/model"
 )
 
 func (s *Scanner) Check(artifacts []*model.Artifact) error {

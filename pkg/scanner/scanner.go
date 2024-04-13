@@ -1,7 +1,7 @@
 package scanner
 
 import (
-	"github.com/tobiaszuercher/vervet/config"
+	"github.com/tobiaszuercher/vreni/config"
 )
 
 type Scanner struct {

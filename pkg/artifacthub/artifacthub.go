@@ -7,7 +7,7 @@ import (
 
 	"github.com/imroc/req/v3"
 
-	"github.com/tobiaszuercher/vervet/config"
+	"github.com/tobiaszuercher/vreni/config"
 )
 
 type Artifacthub struct {

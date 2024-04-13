@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 
-	"github.com/tobiaszuercher/vervet/pkg/model"
+	"github.com/tobiaszuercher/vreni/pkg/model"
 )
 
 const (

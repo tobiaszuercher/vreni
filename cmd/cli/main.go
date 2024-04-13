@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/tobiaszuercher/vervet/config"
-	"github.com/tobiaszuercher/vervet/pkg/cli"
-	"github.com/tobiaszuercher/vervet/pkg/scanner"
+	"github.com/tobiaszuercher/vreni/config"
+	"github.com/tobiaszuercher/vreni/pkg/cli"
+	"github.com/tobiaszuercher/vreni/pkg/scanner"
 )
 
 func main() {
