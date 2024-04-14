@@ -30,7 +30,7 @@ func (a *Artifact) HasUpdate() bool {
 	return a.Version != a.AvailableVersion
 }
 
-func (a *Artifact) UpgradeLevel() UpdateLevel {
+func (a *Artifact) UpdateLevel() UpdateLevel {
 	if a.Version.Major() != a.AvailableVersion.Major() {
 		return Major
 	}
@@ -46,17 +46,17 @@ func (a *Artifact) UpgradeLevel() UpdateLevel {
 	return NoUpdate
 }
 
-func (a *Artifact) RenderDiff() string {
+func (a *Artifact) ColoredDiff() string {
 	red := lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Inline(true)
 	green := lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Inline(true)
 	blue := lipgloss.NewStyle().Foreground(lipgloss.Color("39")).Inline(true)
 	white := lipgloss.NewStyle().Foreground(lipgloss.Color("255")).Inline(true)
 
-	if a.UpgradeLevel() == Major {
+	if a.UpdateLevel() == Major {
 		return red.Render(a.AvailableVersion.String())
 	}
 
-	if a.UpgradeLevel() == Patch {
+	if a.UpdateLevel() == Patch {
 		split := strings.Split(a.AvailableVersion.String(), ".")
 
 		unchanged := white.Render(split[0] + ".")
@@ -65,7 +65,7 @@ func (a *Artifact) RenderDiff() string {
 		return white.Render(unchanged) + blue.Render(updated)
 	}
 
-	if a.UpgradeLevel() == Minor {
+	if a.UpdateLevel() == Minor {
 		split := strings.Split(a.AvailableVersion.String(), ".")
 
 		unchanged := split[0] + "." + split[1] + "."

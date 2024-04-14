@@ -52,7 +52,7 @@ func createRows(artifacts []*model.Artifact, re *lipgloss.Renderer) [][]string {
 	var rows [][]string
 
 	for _, a := range artifacts {
-		rows = append(rows, []string{filepath.Base(a.File), a.URL, a.Version.String(), a.RenderDiff()})
+		rows = append(rows, []string{filepath.Base(a.File), a.URL, a.Version.String(), a.ColoredDiff()})
 	}
 
 	return rows
@@ -65,7 +65,6 @@ func Prompt() bool {
 
 	confirm := huh.NewConfirm().
 		Title("Do you want to update all deps?").
-		Description("Please confirm. ").
 		Affirmative("Yes").
 		Negative("No").
 		Value(&ok)
