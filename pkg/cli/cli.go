@@ -22,9 +22,9 @@ func List(artifacts []*model.Artifact) {
 	rows := createRows(artifacts, re)
 
 	var (
-		HeaderStyle = re.NewStyle().Foreground(purple).Bold(true).Padding(0, 2)
-		CellStyle   = re.NewStyle().Padding(0, 2)
-		OddRowStyle = CellStyle.Copy().Foreground(white)
+		HeaderStyle     = re.NewStyle().Foreground(purple).Bold(true).Padding(0, 2)
+		CellStyle       = re.NewStyle().Padding(0, 2)
+		DefaultRowStyle = CellStyle.Copy().Foreground(white)
 	)
 
 	t := table.New().
@@ -35,12 +35,7 @@ func List(artifacts []*model.Artifact) {
 				return HeaderStyle
 			}
 
-			switch col {
-			case 7:
-				return lipgloss.NewStyle().Background(lipgloss.Color("99"))
-			}
-
-			return OddRowStyle
+			return DefaultRowStyle
 		}).
 		Headers("FILE", "ARTIFACT", "INSTALLED", "AVAILABLE").
 		Rows(rows...)
